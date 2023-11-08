@@ -1,0 +1,22 @@
+{
+  "name": "abs-utils",
+  "version": "1.0.0",
+  "description": "_DESCRIPTION",
+  "main": "_ENTRY",
+  "scripts": {
+    "test": "_TEST_CMD"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abstractn/abs-utils.git"
+  },
+  "keywords": [
+    "_HEYWORD"
+  ],
+  "author": "Abstractn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Abstractn/abs-utils/issues"
+  },
+  "homepage": "https://github.com/Abstractn/abs-utils#readme"
+}
