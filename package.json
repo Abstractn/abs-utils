@@ -1,22 +1,37 @@
 {
   "name": "abs-utils",
   "version": "1.0.0",
-  "description": "_DESCRIPTION",
-  "main": "_ENTRY",
+  "description": "A simple personal collection of utility methods, aliases and polyfills",
+  "types": "dist/abs-utils.d.ts",
+  "browser": "dist/abs-utils.js",
   "scripts": {
-    "test": "_TEST_CMD"
+    "cleanDist": "rimraf dist",
+    "buildTypescript": "tsc",
+    "copyTypescript": "copyfiles -f ./src/*.ts dist",
+    "generateNxScript": "node ./build-utils/generateNxScript.js ./dist/abs-utils.js",
+    "build": "npm run cleanDist && npm run buildTypescript && npm run copyTypescript && npm run generateNxScript"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Abstractn/abs-utils.git"
   },
   "keywords": [
-    "_HEYWORD"
+    "typescript",
+    "javascript",
+    "utils",
+    "quick",
+    "alias",
+    "polyfill",
+    "shorthand"
   ],
   "author": "Abstractn",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Abstractn/abs-utils/issues"
   },
-  "homepage": "https://github.com/Abstractn/abs-utils#readme"
+  "homepage": "https://github.com/Abstractn/abs-utils#readme",
+  "devDependencies": {
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  }
 }
