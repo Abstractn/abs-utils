@@ -1,5 +1,7 @@
 # Abs-Utilities (Abs-Utils)
 
+[![npm version](https://badgen.net/npm/v/abs-utilities)](https://www.npmjs.com/package/abs-utilities) [![Install size](https://packagephobia.com/badge?p=abs-utilities)](https://packagephobia.com/result?p=abs-utilities)
+
 ## Introduction:
 
 This module is a simple collection of common functions.
