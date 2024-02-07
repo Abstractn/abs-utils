@@ -1,9 +1,34 @@
+export interface ProportionalRangeFunctionConfig {
+  oldMin: number;
+  oldMax: number;
+  newMin: number;
+  newMax: number;
+  value: number;
+}
+export function proportionalRange(config: ProportionalRangeFunctionConfig): number;
 export function proportionalRange(
   oldMin: number, oldMax: number,
   newMin: number, newMax: number,
   value: number
+): number;
+
+export function proportionalRange(
+  arg1: number | ProportionalRangeFunctionConfig, oldMax?: number,
+  newMin?: number, newMax?: number,
+  value?: number
 ): number {
-  return ((newMax - newMin) / (oldMax - oldMin)) * (value - oldMin) + newMin;
+  if(
+    typeof arg1 === 'number' &&
+    typeof oldMax === 'number' &&
+    typeof newMin === 'number' &&
+    typeof newMax === 'number' &&
+    typeof value === 'number'
+  ) {
+    return ((newMax - newMin) / (oldMax - arg1)) * (value - arg1) + newMin;
+  } else {
+    const config = (arg1 as ProportionalRangeFunctionConfig);
+    return ((config.newMax - config.newMin) / (config.oldMax - config.oldMin)) * (config.value - config.oldMin) + config.newMin;
+  }
 }
 
 export function rgbToHex(

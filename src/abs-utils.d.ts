@@ -1,3 +1,9 @@
+export declare interface ProportionalRangeFunctionConfig {
+  oldMin: number; oldMax: number;
+  newMin: number; newMax: number;
+  value: number;
+}
+export declare function proportionalRange(config: ProportionalRangeFunctionConfig): number;
 export declare function proportionalRange(oldMin: number, oldMax: number, newMin: number, newMax: number, value: number): number;
 export declare function rgbToHex(r: number, g: number, b: number): string | null;
 export declare function randomInt(min?: number, max?: number): number;
