@@ -1,3 +1,4 @@
+//TODO define overload with config object
 export function proportionalRange(
   oldMin: number, oldMax: number,
   newMin: number, newMax: number,
@@ -54,42 +55,92 @@ export function getNodes(
   }
 }
 
+export function setStyle <K extends keyof CSSStyleDeclaration> (element: HTMLElement, property: K, value: CSSStyleDeclaration[K]): void {
+  element.style[property] = value;
+}
+
+export function setStyles <K extends keyof CSSStyleDeclaration> (element: HTMLElement, properties: Record<K, CSSStyleDeclaration[K]>): void {
+  Object.keys(properties).forEach(property => {
+    element.style[(property as K)] = properties[(property as K)];
+  });
+}
+
+//TODO define `deepCopy`
+
+//TODO define `Array.shuffle`
+
 declare global {
   interface Document {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
   }
   interface Element {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
   }
   interface HTMLElement {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
   }
   interface Node {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
   }
 }
 
 export function absPolyfill(): void {
   [Document, Element, HTMLElement, Node].forEach(NativeClass => {
-    NativeClass.prototype.getNode =   function (query: string) { return getNode(query, this); }
-    NativeClass.prototype.getNodes =  function (query: string) { return getNodes(query, this); };
-    NativeClass.prototype.setStyle =  function (property: string, value: string) { this.style[property] = value; };
-    NativeClass.prototype.setStyles = function (propertyObject: Record<string, string>) {
-      Object.keys(propertyObject).forEach(property => {
-        this.style[property] = propertyObject[property];
-      });
+    NativeClass.prototype.getNode = function (query: string) {
+      return getNode(query, this);
+    };
+    
+    NativeClass.prototype.getNodes = function (query: string) {
+      return getNodes(query, this);
+    };
+    
+    NativeClass.prototype.setStyle = function <K extends keyof CSSStyleDeclaration> (property: K, value: CSSStyleDeclaration[K]) {
+      return setStyle(this, property, value);
+    };
+    
+    NativeClass.prototype.setStyles = function <K extends keyof CSSStyleDeclaration> (properties: Record<K, CSSStyleDeclaration[K]>) {
+      return setStyles(this, properties);
+    };
+
+    NativeClass.prototype.on = function (eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject) {
+      return this.addEventListener(eventType, callback);
+    };
+
+    NativeClass.prototype.off = function (eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject) {
+      return this.removeEventListener(eventType, callback);
+    };
+
+    NativeClass.prototype.attr = function (attributeName: string, value?: string): string | undefined {
+      if(typeof value !== undefined) {
+        this.setAttribute(attributeName, value);
+        return;
+      } else {
+        return this.getAttribute(attributeName);
+      }
     };
   });
 }
