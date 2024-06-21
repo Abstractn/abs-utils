@@ -135,7 +135,7 @@ export function absPolyfill(): void {
     };
 
     NativeClass.prototype.attr = function (attributeName: string, value?: string): string | undefined {
-      if(typeof value !== undefined) {
+      if(typeof value !== 'undefined') {
         this.setAttribute(attributeName, value);
         return;
       } else {
