@@ -1,7 +1,7 @@
 Changelog
 =========
 
-### 1.0.3
+### 1.1.0
 
 Module codebase:
 
@@ -11,6 +11,7 @@ Module codebase:
 * [NEW] Added `attr()` extended to `Document`, `Element`, `HTMLElement` and `Node` classes
 * [NEW] Added global `setStyle()`
 * [NEW] Added global `setStyles()`
+* [EDIT] `proportionalRange()` now has a single `config: ProportonalRangeConfig` parameter overload without breaking the previous usage
 * [EDIT] Updated `setStyle()` parameter types
 * [EDIT] Updated `setStyle()` implementation to use global function
 * [EDIT] Updated `setStyles()` parameter types

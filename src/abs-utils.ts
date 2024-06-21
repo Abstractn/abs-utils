@@ -1,10 +1,40 @@
-//TODO define overload with config object
+export interface ProportionalRangeConfig {
+  oldMin: number;
+  oldMax: number;
+  newMin: number;
+  newMax: number;
+  value: number;
+}
+
 export function proportionalRange(
   oldMin: number, oldMax: number,
   newMin: number, newMax: number,
   value: number
+): number;
+
+export function proportionalRange(config: ProportionalRangeConfig): number;
+
+export function proportionalRange(
+  oldMinOrConfig: number | ProportionalRangeConfig, oldMax?: number,
+  newMin?: number, newMax?: number,
+  value?: number
 ): number {
-  return ((newMax - newMin) / (oldMax - oldMin)) * (value - oldMin) + newMin;
+  const isLinearFunction = (
+    typeof oldMinOrConfig === 'number' &&
+    typeof oldMax === 'number' &&
+    typeof newMin === 'number' &&
+    typeof newMax === 'number' &&
+    typeof value === 'number'
+  );
+  if(isLinearFunction) {
+    const oldMin = oldMinOrConfig as number;
+    return ((newMax - newMin) / (oldMax - oldMin)) * (value - oldMin) + newMin;
+  } else if(typeof oldMinOrConfig === 'object') {
+    const config = oldMinOrConfig as ProportionalRangeConfig;
+    return ((config.newMax - config.newMin) / (config.oldMax - config.oldMin)) * (config.value - config.oldMin) + config.newMin;
+  } else {
+    return NaN;
+  }
 }
 
 export function rgbToHex(
