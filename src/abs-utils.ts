@@ -105,8 +105,8 @@ declare global {
     getNodes(query: string): HTMLElement[] | null;
     setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
     setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
-    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
-    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
   }
   interface Element {
@@ -114,8 +114,8 @@ declare global {
     getNodes(query: string): HTMLElement[] | null;
     setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
     setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
-    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
-    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
   }
   interface HTMLElement {
@@ -123,8 +123,8 @@ declare global {
     getNodes(query: string): HTMLElement[] | null;
     setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
     setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
-    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
-    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
   }
   interface Node {
@@ -132,8 +132,8 @@ declare global {
     getNodes(query: string): HTMLElement[] | null;
     setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
     setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
-    on(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
-    off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
   }
 }
@@ -156,11 +156,11 @@ export function absPolyfill(): void {
       return setStyles(this, properties);
     };
 
-    NativeClass.prototype.on = function (eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject) {
+    NativeClass.prototype.on = function (eventType: string, callback: EventListenerOrEventListenerObject) {
       return this.addEventListener(eventType, callback);
     };
 
-    NativeClass.prototype.off = function (eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject) {
+    NativeClass.prototype.off = function (eventType: string, callback: EventListenerOrEventListenerObject) {
       return this.removeEventListener(eventType, callback);
     };
 
