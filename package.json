@@ -1,6 +1,6 @@
 {
   "name": "abs-utilities",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A simple personal collection of utility methods, aliases and polyfills",
   "types": "dist/abs-utils.d.ts",
   "browser": "dist/abs-utils.js",
