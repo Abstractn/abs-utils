@@ -59,11 +59,11 @@ export function setStyles(element, properties) {
     });
 }
 export function degToRad(degrees) {
-    return degrees * (this.PI / 180);
+    return degrees * (Math.PI / 180);
 }
 ;
 export function radToDeg(radians) {
-    return radians / (this.PI / 180);
+    return radians / (Math.PI / 180);
 }
 ;
 export function absPolyfill() {

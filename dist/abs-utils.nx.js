@@ -59,11 +59,11 @@ function setStyles(element, properties) {
     });
 }
 function degToRad(degrees) {
-    return degrees * (this.PI / 180);
+    return degrees * (Math.PI / 180);
 }
 ;
 function radToDeg(radians) {
-    return radians / (this.PI / 180);
+    return radians / (Math.PI / 180);
 }
 ;
 function absPolyfill() {

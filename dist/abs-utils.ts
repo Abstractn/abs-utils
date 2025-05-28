@@ -96,11 +96,11 @@ export function setStyles <K extends keyof CSSStyleDeclaration> (element: HTMLEl
 }
 
 export function degToRad(degrees: number): number {
-  return degrees * (this.PI / 180);
+  return degrees * (Math.PI / 180);
 };
 
 export function radToDeg(radians: number): number {
-  return radians / (this.PI / 180);
+  return radians / (Math.PI / 180);
 };
 
 //TODO define `deepCopy`
