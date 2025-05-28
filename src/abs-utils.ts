@@ -95,6 +95,14 @@ export function setStyles <K extends keyof CSSStyleDeclaration> (element: HTMLEl
   });
 }
 
+export function degToRad(degrees: number): number {
+  return degrees * (this.PI / 180);
+};
+
+export function radToDeg(radians: number): number {
+  return radians / (this.PI / 180);
+};
+
 //TODO define `deepCopy`
 
 //TODO define `Array.shuffle`
@@ -136,6 +144,11 @@ declare global {
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
   }
+  interface Math {
+    randomInt(min: number, max: number): number;
+    degToRad(degrees: number): number;
+    radToDeg(radians: number): number;
+  }
 }
 
 export function absPolyfill(): void {
@@ -173,4 +186,7 @@ export function absPolyfill(): void {
       }
     };
   });
+  Math.randomInt = function (min: number, max: number): number { return randomInt(min, max); };
+  Math.degToRad = function (degrees: number): number { return degToRad(degrees); };
+  Math.radToDeg = function (radians: number): number { return radToDeg(radians); };
 }

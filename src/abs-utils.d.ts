@@ -50,5 +50,10 @@ declare global {
     off(eventType: keyof ElementEventMap, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
   }
+  interface Math {
+    randomInt(min: number, max: number): number;
+    degToRad(degrees: number): number;
+    radToDeg(radians: number): number;
+  }
 }
 export declare function absPolyfill(): void;
