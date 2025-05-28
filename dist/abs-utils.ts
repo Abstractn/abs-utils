@@ -1,9 +1,40 @@
+export interface ProportionalRangeConfig {
+  oldMin: number;
+  oldMax: number;
+  newMin: number;
+  newMax: number;
+  value: number;
+}
+
 export function proportionalRange(
   oldMin: number, oldMax: number,
   newMin: number, newMax: number,
   value: number
+): number;
+
+export function proportionalRange(config: ProportionalRangeConfig): number;
+
+export function proportionalRange(
+  oldMinOrConfig: number | ProportionalRangeConfig, oldMax?: number,
+  newMin?: number, newMax?: number,
+  value?: number
 ): number {
-  return ((newMax - newMin) / (oldMax - oldMin)) * (value - oldMin) + newMin;
+  const isLinearFunction = (
+    typeof oldMinOrConfig === 'number' &&
+    typeof oldMax === 'number' &&
+    typeof newMin === 'number' &&
+    typeof newMax === 'number' &&
+    typeof value === 'number'
+  );
+  if(isLinearFunction) {
+    const oldMin = oldMinOrConfig as number;
+    return ((newMax - newMin) / (oldMax - oldMin)) * (value - oldMin) + newMin;
+  } else if(typeof oldMinOrConfig === 'object') {
+    const config = oldMinOrConfig as ProportionalRangeConfig;
+    return ((config.newMax - config.newMin) / (config.oldMax - config.oldMin)) * (config.value - config.oldMin) + config.newMin;
+  } else {
+    return NaN;
+  }
 }
 
 export function rgbToHex(
@@ -54,42 +85,108 @@ export function getNodes(
   }
 }
 
+export function setStyle <K extends keyof CSSStyleDeclaration> (element: HTMLElement, property: K, value: CSSStyleDeclaration[K]): void {
+  element.style[property] = value;
+}
+
+export function setStyles <K extends keyof CSSStyleDeclaration> (element: HTMLElement, properties: Record<K, CSSStyleDeclaration[K]>): void {
+  Object.keys(properties).forEach(property => {
+    element.style[(property as K)] = properties[(property as K)];
+  });
+}
+
+export function degToRad(degrees: number): number {
+  return degrees * (this.PI / 180);
+};
+
+export function radToDeg(radians: number): number {
+  return radians / (this.PI / 180);
+};
+
+//TODO define `deepCopy`
+
+//TODO define `Array.shuffle`
+
 declare global {
   interface Document {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
   }
   interface Element {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
   }
   interface HTMLElement {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
   }
   interface Node {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle(property: string, value: string): void;
-    setStyles(propertyObject: Record<string, string>): void;
+    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
+    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    on(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    off(eventType: string, callback: EventListenerOrEventListenerObject): void;
+    attr(attributeName: string, value?: string): string | undefined;
+  }
+  interface Math {
+    randomInt(min: number, max: number): number;
+    degToRad(degrees: number): number;
+    radToDeg(radians: number): number;
   }
 }
 
 export function absPolyfill(): void {
   [Document, Element, HTMLElement, Node].forEach(NativeClass => {
-    NativeClass.prototype.getNode =   function (query: string) { return getNode(query, this); }
-    NativeClass.prototype.getNodes =  function (query: string) { return getNodes(query, this); };
-    NativeClass.prototype.setStyle =  function (property: string, value: string) { this.style[property] = value; };
-    NativeClass.prototype.setStyles = function (propertyObject: Record<string, string>) {
-      Object.keys(propertyObject).forEach(property => {
-        this.style[property] = propertyObject[property];
-      });
+    NativeClass.prototype.getNode = function (query: string) {
+      return getNode(query, this);
+    };
+    
+    NativeClass.prototype.getNodes = function (query: string) {
+      return getNodes(query, this);
+    };
+    
+    NativeClass.prototype.setStyle = function <K extends keyof CSSStyleDeclaration> (property: K, value: CSSStyleDeclaration[K]) {
+      return setStyle(this, property, value);
+    };
+    
+    NativeClass.prototype.setStyles = function <K extends keyof CSSStyleDeclaration> (properties: Record<K, CSSStyleDeclaration[K]>) {
+      return setStyles(this, properties);
+    };
+
+    NativeClass.prototype.on = function (eventType: string, callback: EventListenerOrEventListenerObject) {
+      return this.addEventListener(eventType, callback);
+    };
+
+    NativeClass.prototype.off = function (eventType: string, callback: EventListenerOrEventListenerObject) {
+      return this.removeEventListener(eventType, callback);
+    };
+
+    NativeClass.prototype.attr = function (attributeName: string, value?: string): string | undefined {
+      if(typeof value !== 'undefined') {
+        this.setAttribute(attributeName, value);
+        return;
+      } else {
+        return this.getAttribute(attributeName);
+      }
     };
   });
+  Math.randomInt = function (min: number, max: number): number { return randomInt(min, max); };
+  Math.degToRad = function (degrees: number): number { return degToRad(degrees); };
+  Math.radToDeg = function (radians: number): number { return radToDeg(radians); };
 }
