@@ -11,6 +11,9 @@ Module codebase:
 * [NEW] Added `attr()` extended to `Document`, `Element`, `HTMLElement` and `Node` classes
 * [NEW] Added global `setStyle()`
 * [NEW] Added global `setStyles()`
+* [NEW] Added `randomInt` function to `Math` native class
+* [NEW] Added `degToRad` function to `Math` native class
+* [NEW] Added `radToDeg` function to `Math` native class
 * [EDIT] `proportionalRange()` now has a single `config: ProportonalRangeConfig` parameter overload without breaking the previous usage
 * [EDIT] Updated `setStyle()` parameter types
 * [EDIT] Updated `setStyle()` implementation to use global function
