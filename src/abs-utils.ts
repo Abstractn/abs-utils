@@ -85,6 +85,37 @@ export function getNodes(
   }
 }
 
+//TODO `createNode`
+//TODO create definition and test
+/* export function createNode(
+  tag: string,
+  attributes?: Record<string, string>,
+  content?: string | number | HTMLElement | Array<HTMLElement>,
+  callback?: ((element: HTMLElement) => void)
+): HTMLElement {
+  const element = document.createElement(tag) as HTMLElement;
+
+  for(const [key, value] of Object.entries(attributes || {})) {
+    element.setAttribute(key, value);
+  }
+
+  if(typeof content === 'string' || typeof content === 'number') {
+    element.textContent = content.toString();
+  } else if(content instanceof HTMLElement) {
+    element.appendChild(content);
+  } else if(Array.isArray(content)) {
+    content.forEach(child => {
+      if(child instanceof HTMLElement) {
+        element.appendChild(child);
+      }
+    });
+  }
+
+  typeof callback === 'function' && callback(element);
+
+  return element;
+} */
+
 export function setStyle <K extends keyof CSSStyleDeclaration> (element: HTMLElement, property: K, value: CSSStyleDeclaration[K]): void {
   element.style[property] = value;
 }
