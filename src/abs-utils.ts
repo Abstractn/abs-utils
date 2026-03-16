@@ -119,13 +119,15 @@ export function getNodes(
   return element;
 } */
 
-export function setStyle <K extends keyof CSSStyleDeclaration> (element: HTMLElement, property: K, value: CSSStyleDeclaration[K]): void {
-  element.style[property] = value;
+
+export function setStyle(element: HTMLElement, property: string, value: string): void {
+  const kebabProperty = property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+  element.style.setProperty(kebabProperty, value);
 }
 
-export function setStyles <K extends keyof CSSStyleDeclaration> (element: HTMLElement, properties: Record<K, CSSStyleDeclaration[K]>): void {
+export function setStyles(element: HTMLElement, properties: Record<string, string>): void {
   Object.keys(properties).forEach(property => {
-    element.style[(property as K)] = properties[(property as K)];
+    setStyle(element, property, properties[property]);
   });
 }
 
@@ -145,8 +147,8 @@ declare global {
   interface Document {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -154,8 +156,8 @@ declare global {
   interface Element {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -163,8 +165,8 @@ declare global {
   interface HTMLElement {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -172,8 +174,8 @@ declare global {
   interface Node {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -195,11 +197,11 @@ export function absPolyfill(): void {
       return getNodes(query, this);
     };
     
-    NativeClass.prototype.setStyle = function <K extends keyof CSSStyleDeclaration> (property: K, value: CSSStyleDeclaration[K]) {
+    NativeClass.prototype.setStyle = function (property: string, value: string) {
       return setStyle(this, property, value);
     };
     
-    NativeClass.prototype.setStyles = function <K extends keyof CSSStyleDeclaration> (properties: Record<K, CSSStyleDeclaration[K]>) {
+    NativeClass.prototype.setStyles = function (properties: Record<string, string>) {
       return setStyles(this, properties);
     };
 
