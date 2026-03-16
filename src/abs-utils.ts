@@ -46,7 +46,7 @@ export function rgbToHex(
   const isGreenWithinRange = g > -1 && g < 256;
   const isBlueWithinRange  = b > -1 && b < 256;
   if(isRedWithinRange && isGreenWithinRange && isBlueWithinRange) {
-    return ((r << 16) | (g << 8) | b).toString(16).toUpperCase();
+    return ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0').toUpperCase();
   } else {
     return null;
   }
