@@ -7,7 +7,7 @@
   "scripts": {
     "cleanDist": "rimraf dist",
     "buildTypescript": "tsc",
-    "copyTypescript": "node ./build-utils/copyFiles.js './src/*.ts' './dist'",
+    "copyTypescript": "node ./build-utils/copyFiles.js ./src/abs-utils.ts ./dist && node ./build-utils/copyFiles.js ./src/abs-utils.d.ts ./dist",
     "generateNxScript": "node ./build-utils/generateNxScript.js ./dist/abs-utils.js",
     "build": "npm run cleanDist && npm run buildTypescript && npm run copyTypescript && npm run generateNxScript"
   },
