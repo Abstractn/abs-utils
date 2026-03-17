@@ -88,18 +88,20 @@ export function getNodes(
   }
 }
 
-//TODO `createNode`
-//TODO create definition and test
-/* export function createNode(
+export function createNode(
   tag: string,
   attributes?: Record<string, string>,
   content?: string | number | HTMLElement | Array<HTMLElement>,
   callback?: ((element: HTMLElement) => void)
 ): HTMLElement {
-  const element = document.createElement(tag) as HTMLElement;
+  const element = document.createElement(tag);
 
-  for(const [key, value] of Object.entries(attributes || {})) {
-    element.setAttribute(key, value);
+  if(attributes) {
+    for(const key in attributes) {
+      if(attributes.hasOwnProperty(key)) {
+        element.setAttribute(key, attributes[key]);
+      }
+    }
   }
 
   if(typeof content === 'string' || typeof content === 'number') {
@@ -108,17 +110,14 @@ export function getNodes(
     element.appendChild(content);
   } else if(Array.isArray(content)) {
     content.forEach(child => {
-      if(child instanceof HTMLElement) {
-        element.appendChild(child);
-      }
+      (child instanceof HTMLElement) && element.appendChild(child);
     });
   }
 
-  typeof callback === 'function' && callback(element);
+  callback?.(element);
 
   return element;
-} */
-
+}
 
 export function setStyle(element: HTMLElement, property: string, value: string): void {
   const kebabProperty = property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);

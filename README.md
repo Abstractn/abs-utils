@@ -104,6 +104,13 @@ Browser iclusion:
   - `src: T`
   - returns `T`
 
+- ### createNode
+  - `tag: string`
+  - `attributes?: Record<string, string>`
+  - `content?: string | number | HTMLElement | Array<HTMLElement>`
+  - `callback?: ((element: HTMLElement) => void`
+  - returns `HTMLElement`
+
 - ### Math.randomInt
   - `min?: number`, default is `0`
   - `max?: number`, default is `1`

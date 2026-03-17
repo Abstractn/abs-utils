@@ -16,6 +16,12 @@ export declare function getNodes(query: string, context?: HTMLElement): Array<HT
 export declare function setStyle(element: HTMLElement, property: string, value: string): void;
 export declare function setStyles(element: HTMLElement, properties: Record<string, string>): void;
 export declare function deepCopy<T>(src: T): T;
+export declare function createNode(
+  tag: string,
+  attributes?: Record<string, string>,
+  content?: string | number | HTMLElement | Array<HTMLElement>,
+  callback?: ((element: HTMLElement) => void)
+): HTMLElement;
 declare global {
   interface Document {
     getNode(query: string): HTMLElement | null;
