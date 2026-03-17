@@ -9,6 +9,8 @@ export declare function proportionalRange(oldMin: number, oldMax: number, newMin
 export declare function proportionalRange(config: ProportionalRangeConfig): number;
 export declare function rgbToHex(r: number, g: number, b: number): string | null;
 export declare function randomInt(min?: number, max?: number): number;
+export declare function degToRad(degrees: number): number;
+export declare function radToDeg(radians: number): number;
 export declare function getNode(query: string, context?: HTMLElement): HTMLElement | null;
 export declare function getNodes(query: string, context?: HTMLElement): Array<HTMLElement> | null;
 export declare function setStyle(element: HTMLElement, property: string, value: string): void;

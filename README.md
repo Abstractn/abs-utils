@@ -59,6 +59,14 @@ Browser iclusion:
   - `max?: number`, default is `1`
   - returns `number`
 
+- ### degToRad
+  - `degrees: number`
+  - returns `number`
+
+- ### radToDeg
+  - `radians: number`
+  - returns `number`
+
 - ### getNode
   - `query: string`
   - `context?: HTMLElement`, default is `document`
@@ -95,3 +103,16 @@ Browser iclusion:
 - ### deepCopy
   - `src: T`
   - returns `T`
+
+- ### Math.randomInt
+  - `min?: number`, default is `0`
+  - `max?: number`, default is `1`
+  - returns `number`
+
+- ### Math.degToRad
+  - `degrees: number`
+  - returns `number`
+
+- ### Math.radToDeg
+  - `radians: number`
+  - returns `number`
