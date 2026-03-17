@@ -228,8 +228,6 @@ export const deepCopy = <T>(src: T): T => {
   return _deepCopy(src, new WeakMap());
 };
 
-//TODO define `Array.shuffle`
-
 declare global {
   interface Document {
     getNode(query: string): HTMLElement | null;
@@ -272,6 +270,18 @@ declare global {
     degToRad(degrees: number): number;
     radToDeg(radians: number): number;
   }
+  interface Array<T> {
+    shuffle(): Array<T>;
+    remove(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
+    removeAll(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
+    removeIndex(index: number): Array<T>;
+  }
+  interface ArrayConstructor {
+    shuffle<T>(array: Array<T>): Array<T>;
+    remove<T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
+    removeAll<T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
+    removeIndex<T>(array: Array<T>, index: number): Array<T>;
+  }
 }
 
 export function absPolyfill(): void {
@@ -312,4 +322,48 @@ export function absPolyfill(): void {
   Math.randomInt = function (min: number, max: number): number { return randomInt(min, max); };
   Math.degToRad = function (degrees: number): number { return degToRad(degrees); };
   Math.radToDeg = function (radians: number): number { return radToDeg(radians); };
+
+  Array.prototype.shuffle = function <T>(): Array<T> {
+    /** src: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array */
+    let currentIndex = this.length, randomIndex;
+    while(currentIndex != 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [this[currentIndex], this[randomIndex]] = [
+        this[randomIndex], this[currentIndex]
+      ];
+    }
+    return this as Array<T>;
+  };
+  Array.prototype.remove = function <T>(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+    const itemIndex = this.findIndex(predicate);
+    return this.removeIndex(itemIndex) as Array<T>;
+  };
+  Array.prototype.removeAll = function <T>(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+    for(let i = this.length - 1; i >= 0; i--) {
+      predicate(this[i], i, this) && this.splice(i, 1);
+    }
+    return this as Array<T>;
+  };
+  Array.prototype.removeIndex = function<T>(index: number): Array<T> {
+    const isIndexWithinBounds = index >= 0 && index < this.length;
+    if(isIndexWithinBounds) {
+      this.splice(index, 1);
+    }
+    return this as Array<T>;
+  };
+
+  Array.shuffle = function <T>(array: Array<T>): Array<T> {
+    return deepCopy(array).shuffle();
+  };
+  Array.remove = function <T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+    return deepCopy(array).remove(predicate);
+  };
+  Array.removeAll = function <T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+    return deepCopy(array).removeAll(predicate);
+  };
+  Array.removeIndex = function <T>(array: Array<T>, index: number): Array<T> {
+    return deepCopy(array).removeIndex(index);
+  };
 }

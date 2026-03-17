@@ -64,5 +64,19 @@ declare global {
     degToRad(degrees: number): number;
     radToDeg(radians: number): number;
   }
+
+  interface Array<T> {
+    shuffle(): Array<T>;
+    remove(predicate: (item: T) => boolean): Array<T>;
+    removeAll(predicate: (item: T) => boolean): Array<T>;
+    removeIndex(index: number): Array<T>;
+  }
+
+  interface ArrayConstructor {
+    shuffle<T>(array: Array<T>): Array<T>;
+    remove<T>(array: Array<T>, predicate: (item: T) => boolean): Array<T>;
+    removeAll<T>(array: Array<T>, predicate: (item: T) => boolean): Array<T>;
+    removeIndex<T>(array: Array<T>, index: number): Array<T>;
+  }
 }
 export declare function absPolyfill(): void;

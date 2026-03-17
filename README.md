@@ -123,3 +123,41 @@ Browser iclusion:
 - ### Math.radToDeg
   - `radians: number`
   - returns `number`
+
+- ### Array.shuffle (static)
+  - `array: Array<T>`
+  - returns `Array<T>`
+  - does not mutate original array
+
+- ### Array.shuffle (prototype)
+  - mutates original array
+
+- ### Array.remove (static)
+  - `array: Array<T>`
+  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - returns `Array<T>`
+  - does not mutate original array
+
+- ### Array.remove (prototype)
+  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - mutates original array
+
+- ### Array.removeAll (static)
+  - `array: Array<T>`
+  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - returns `Array<T>`
+  - does not mutate original array
+
+- ### Array.removeAll (prototype)
+  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - mutates original array
+
+- ### Array.removeIndex (static)
+  - `array: Array<T>`
+  - `index: number`
+  - returns `Array<T>`
+  - does not mutate original array
+
+- ### Array.removeIndex (prototype)
+  - `index: number`
+  - mutates original array
