@@ -1,6 +1,18 @@
 Changelog
 =========
 
+### 1.1.1
+* [NEW] Added, `Array.shuffle()`, `Array.remove()`, `Array.removeAll()` and `Array.removeIndex()`, all available as both
+* * static `Array` methods that don't mutate the original array
+* * prototype methods that mutate original array and return self to support chaining
+* [NEW] Added a highly robust implementation of `deepCopy()`
+* [NEW] Added `createNode()`
+* [EDIT] `setStyle` and `setStyles` now accept type string for `property` param to allow both camel case, kebab case (css-like) and style variables definition
+* [FIX] Fixed rgbToHex returning completely incorrect value on inputs lower than double hex digits
+* [FIX] Fixed incorrect type for event name in `on()` and `off()`
+* [FIX] `randomInt` now swaps `min` and `max` if `min` is greater than `max`
+* [FIX] Added missing definitions in README
+
 ### 1.1.0
 
 Module codebase:
