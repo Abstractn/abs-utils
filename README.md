@@ -29,12 +29,23 @@ Browser iclusion:
 
 ## Library:
 
+- ### ProportionalRangeConfig
+  - `oldMin: number`
+  - `oldMax: number`
+  - `newMin: number`
+  - `newMax: number`
+  - `value: number`
+
 - ### proportionalRange
   - `oldMin: number`
   - `oldMax: number`
   - `newMin: number`
   - `newMax: number`
   - `value: number`
+  - returns `number`
+
+- ### proportionalRange
+  - `config: ProportionalRangeConfig`
   - returns `number`
 
 - ### rgbToHex
@@ -60,19 +71,19 @@ Browser iclusion:
 
 - ### setStyle
   - `element: HTMLElement`
-  - `property: K`
-  - `value: CSSStyleDeclaration[K]`
+  - `property: string` (allows camel case, kebab case and style variables)
+  - `value: string`
 
 - ### setStyles
   - `element: HTMLElement`
-  - `properties: Record<K, CSSStyleDeclaration[K]>`
+  - `properties: Record<string, string>` (keys allow camel case, kebab case and style variables)
 
 - ### Element.on
-  - `eventType: keyof ElementEventMap`
+  - `eventType: string`
   - `callback: EventListenerOrEventListenerObject`
 
 - ### Element.off
-  - `eventType: keyof ElementEventMap`
+  - `eventType: string`
   - `callback: EventListenerOrEventListenerObject`
 
 - ### Element.attr
