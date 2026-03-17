@@ -91,3 +91,7 @@ Browser iclusion:
   - `value?: string`
   - returns `string` if `value` is missing
   - returns `undefined` if `value` is passed
+
+- ### deepCopy
+  - `src: T`
+  - returns `T`

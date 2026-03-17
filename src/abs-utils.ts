@@ -139,7 +139,95 @@ export function radToDeg(radians: number): number {
   return radians / (Math.PI / 180);
 }
 
-//TODO define `deepCopy`
+export const deepCopy = <T>(src: T): T => {
+  const _deepCopy = <U>(src: U, _seen: WeakMap<object, unknown>): U => {
+    let res: U;
+    
+    const isPrimitive = src === null || typeof src !== 'object';
+    const isDate = src instanceof Date;
+    const isRegExp = src instanceof RegExp;
+    const isArray = Array.isArray(src);
+    const isMap = src instanceof Map;
+    const isSet = src instanceof Set;
+    const isArrayBuffer = src instanceof ArrayBuffer;
+    const isTypedArray = ArrayBuffer.isView(src) && !(src instanceof DataView);
+    const isDataView = src instanceof DataView;
+    const isCircular = !isPrimitive && _seen.has(src as object);
+    
+    if(isPrimitive) {
+      res = src;
+    } else if(isCircular) {
+      res = _seen.get(src as object) as U;
+    } else if(isDate) {
+      res = new Date(src.getTime()) as U;
+      _seen.set(src as object, res);
+    } else if(isRegExp) {
+      res = new RegExp(src.source, src.flags) as U;
+      _seen.set(src as object, res);
+    } else if(isMap) {
+      const target = new Map();
+      _seen.set(src as object, target);
+
+      (src as Map<unknown, unknown>).forEach((value, key) => {
+        target.set(_deepCopy(key, _seen), _deepCopy(value, _seen));
+      });
+
+      res = target as U;
+    } else if(isSet) {
+      const target = new Set();
+      _seen.set(src as object, target);
+
+      (src as Set<unknown>).forEach((value) => {
+        target.add(_deepCopy(value, _seen));
+      });
+
+      res = target as U;
+    } else if(isArrayBuffer) {
+      res = (src as ArrayBuffer).slice(0) as U;
+      _seen.set(src as object, res);
+    } else if(isTypedArray) {
+      const typedSrc = src as unknown as { constructor: new (buffer: ArrayBuffer, byteOffset: number, length: number) => U, buffer: ArrayBuffer, byteOffset: number, byteLength: number, BYTES_PER_ELEMENT: number };
+      const clonedBuffer = _deepCopy(typedSrc.buffer, _seen);
+      res = new typedSrc.constructor(clonedBuffer, typedSrc.byteOffset, typedSrc.byteLength / typedSrc.BYTES_PER_ELEMENT);
+      _seen.set(src as object, res);
+    } else if(isDataView) {
+      const dvSrc = src as unknown as DataView;
+      const clonedBuffer = _deepCopy(dvSrc.buffer, _seen);
+      res = new DataView(clonedBuffer, dvSrc.byteOffset, dvSrc.byteLength) as U;
+      _seen.set(src as object, res);
+    } else if(isArray) {
+      const target: any[] = [];
+      _seen.set(src as object, target);
+
+      src.forEach((item, index) => {
+        target[index] = _deepCopy(item, _seen);
+      });
+
+      res = target as U;
+    } else {
+      const target: any = Object.create(Object.getPrototypeOf(src));
+      _seen.set(src as object, target);
+      const stringKeyList = Object.keys(src as object);
+      const symbolKeyList = Object.getOwnPropertySymbols(src as object).filter(
+        (sym) => Object.prototype.propertyIsEnumerable.call(src, sym),
+      );
+
+      stringKeyList.forEach((key) => {
+        target[key] = _deepCopy((src as Record<string, unknown>)[key], _seen);
+      });
+
+      symbolKeyList.forEach((sym) => {
+        target[sym] = _deepCopy((src as Record<symbol, unknown>)[sym], _seen);
+      });
+
+      res = target as U;
+    }
+    
+    return res;
+  };
+
+  return _deepCopy(src, new WeakMap());
+};
 
 //TODO define `Array.shuffle`
 
