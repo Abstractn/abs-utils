@@ -46,7 +46,7 @@ export function rgbToHex(
   const isGreenWithinRange = g > -1 && g < 256;
   const isBlueWithinRange  = b > -1 && b < 256;
   if(isRedWithinRange && isGreenWithinRange && isBlueWithinRange) {
-    return ((r << 16) | (g << 8) | b).toString(16).toUpperCase();
+    return ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0').toUpperCase();
   } else {
     return null;
   }
@@ -58,6 +58,9 @@ export function randomInt(
 ): number {
   min = Math.ceil(min);
   max = Math.floor(max);
+  if(min > max) {
+    [min, max] = [max, min];
+  }
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -85,34 +88,152 @@ export function getNodes(
   }
 }
 
-export function setStyle <K extends keyof CSSStyleDeclaration> (element: HTMLElement, property: K, value: CSSStyleDeclaration[K]): void {
-  element.style[property] = value;
+export function createNode(
+  tag: string,
+  attributes?: Record<string, string>,
+  content?: string | number | HTMLElement | Array<HTMLElement>,
+  callback?: ((element: HTMLElement) => void)
+): HTMLElement {
+  const element = document.createElement(tag);
+
+  if(attributes) {
+    for(const key in attributes) {
+      if(attributes.hasOwnProperty(key)) {
+        element.setAttribute(key, attributes[key]);
+      }
+    }
+  }
+
+  if(typeof content === 'string' || typeof content === 'number') {
+    element.textContent = content.toString();
+  } else if(content instanceof HTMLElement) {
+    element.appendChild(content);
+  } else if(Array.isArray(content)) {
+    content.forEach(child => {
+      (child instanceof HTMLElement) && element.appendChild(child);
+    });
+  }
+
+  callback?.(element);
+
+  return element;
 }
 
-export function setStyles <K extends keyof CSSStyleDeclaration> (element: HTMLElement, properties: Record<K, CSSStyleDeclaration[K]>): void {
+export function setStyle(element: HTMLElement, property: string, value: string): void {
+  const kebabProperty = property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+  element.style.setProperty(kebabProperty, value);
+}
+
+export function setStyles(element: HTMLElement, properties: Record<string, string>): void {
   Object.keys(properties).forEach(property => {
-    element.style[(property as K)] = properties[(property as K)];
+    setStyle(element, property, properties[property]);
   });
 }
 
 export function degToRad(degrees: number): number {
   return degrees * (Math.PI / 180);
-};
+}
 
 export function radToDeg(radians: number): number {
   return radians / (Math.PI / 180);
+}
+
+export const deepCopy = <T>(src: T): T => {
+  const _deepCopy = <U>(src: U, _seen: WeakMap<object, unknown>): U => {
+    let res: U;
+    
+    const isPrimitive = src === null || typeof src !== 'object';
+    const isDate = src instanceof Date;
+    const isRegExp = src instanceof RegExp;
+    const isArray = Array.isArray(src);
+    const isMap = src instanceof Map;
+    const isSet = src instanceof Set;
+    const isArrayBuffer = src instanceof ArrayBuffer;
+    const isTypedArray = ArrayBuffer.isView(src) && !(src instanceof DataView);
+    const isDataView = src instanceof DataView;
+    const isCircular = !isPrimitive && _seen.has(src as object);
+    
+    if(isPrimitive) {
+      res = src;
+    } else if(isCircular) {
+      res = _seen.get(src as object) as U;
+    } else if(isDate) {
+      res = new Date(src.getTime()) as U;
+      _seen.set(src as object, res);
+    } else if(isRegExp) {
+      res = new RegExp(src.source, src.flags) as U;
+      _seen.set(src as object, res);
+    } else if(isMap) {
+      const target = new Map();
+      _seen.set(src as object, target);
+
+      (src as Map<unknown, unknown>).forEach((value, key) => {
+        target.set(_deepCopy(key, _seen), _deepCopy(value, _seen));
+      });
+
+      res = target as U;
+    } else if(isSet) {
+      const target = new Set();
+      _seen.set(src as object, target);
+
+      (src as Set<unknown>).forEach((value) => {
+        target.add(_deepCopy(value, _seen));
+      });
+
+      res = target as U;
+    } else if(isArrayBuffer) {
+      res = (src as ArrayBuffer).slice(0) as U;
+      _seen.set(src as object, res);
+    } else if(isTypedArray) {
+      const typedSrc = src as unknown as { constructor: new (buffer: ArrayBuffer, byteOffset: number, length: number) => U, buffer: ArrayBuffer, byteOffset: number, byteLength: number, BYTES_PER_ELEMENT: number };
+      const clonedBuffer = _deepCopy(typedSrc.buffer, _seen);
+      res = new typedSrc.constructor(clonedBuffer, typedSrc.byteOffset, typedSrc.byteLength / typedSrc.BYTES_PER_ELEMENT);
+      _seen.set(src as object, res);
+    } else if(isDataView) {
+      const dvSrc = src as unknown as DataView;
+      const clonedBuffer = _deepCopy(dvSrc.buffer, _seen);
+      res = new DataView(clonedBuffer, dvSrc.byteOffset, dvSrc.byteLength) as U;
+      _seen.set(src as object, res);
+    } else if(isArray) {
+      const target: any[] = [];
+      _seen.set(src as object, target);
+
+      src.forEach((item, index) => {
+        target[index] = _deepCopy(item, _seen);
+      });
+
+      res = target as U;
+    } else {
+      const target: any = Object.create(Object.getPrototypeOf(src));
+      _seen.set(src as object, target);
+      const stringKeyList = Object.keys(src as object);
+      const symbolKeyList = Object.getOwnPropertySymbols(src as object).filter(
+        (sym) => Object.prototype.propertyIsEnumerable.call(src, sym),
+      );
+
+      stringKeyList.forEach((key) => {
+        target[key] = _deepCopy((src as Record<string, unknown>)[key], _seen);
+      });
+
+      symbolKeyList.forEach((sym) => {
+        target[sym] = _deepCopy((src as Record<symbol, unknown>)[sym], _seen);
+      });
+
+      res = target as U;
+    }
+    
+    return res;
+  };
+
+  return _deepCopy(src, new WeakMap());
 };
-
-//TODO define `deepCopy`
-
-//TODO define `Array.shuffle`
 
 declare global {
   interface Document {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -120,8 +241,8 @@ declare global {
   interface Element {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -129,8 +250,8 @@ declare global {
   interface HTMLElement {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -138,8 +259,8 @@ declare global {
   interface Node {
     getNode(query: string): HTMLElement | null;
     getNodes(query: string): HTMLElement[] | null;
-    setStyle<K extends keyof CSSStyleDeclaration>(property: K, value: CSSStyleDeclaration[K]): void;
-    setStyles<K extends keyof CSSStyleDeclaration>(properties: Record<K, CSSStyleDeclaration[K]>): void;
+    setStyle(property: string, value: string): void;
+    setStyles(properties: Record<string, string>): void;
     on(eventType: string, callback: EventListenerOrEventListenerObject): void;
     off(eventType: string, callback: EventListenerOrEventListenerObject): void;
     attr(attributeName: string, value?: string): string | undefined;
@@ -148,6 +269,18 @@ declare global {
     randomInt(min: number, max: number): number;
     degToRad(degrees: number): number;
     radToDeg(radians: number): number;
+  }
+  interface Array<T> {
+    shuffle(): Array<T>;
+    remove(predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
+    removeAll(predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
+    removeIndex(index: number): Array<T>;
+  }
+  interface ArrayConstructor {
+    shuffle<T>(array: Array<T>): Array<T>;
+    remove<T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
+    removeAll<T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
+    removeIndex<T>(array: Array<T>, index: number): Array<T>;
   }
 }
 
@@ -161,11 +294,11 @@ export function absPolyfill(): void {
       return getNodes(query, this);
     };
     
-    NativeClass.prototype.setStyle = function <K extends keyof CSSStyleDeclaration> (property: K, value: CSSStyleDeclaration[K]) {
+    NativeClass.prototype.setStyle = function (property: string, value: string) {
       return setStyle(this, property, value);
     };
     
-    NativeClass.prototype.setStyles = function <K extends keyof CSSStyleDeclaration> (properties: Record<K, CSSStyleDeclaration[K]>) {
+    NativeClass.prototype.setStyles = function (properties: Record<string, string>) {
       return setStyles(this, properties);
     };
 
@@ -189,4 +322,48 @@ export function absPolyfill(): void {
   Math.randomInt = function (min: number, max: number): number { return randomInt(min, max); };
   Math.degToRad = function (degrees: number): number { return degToRad(degrees); };
   Math.radToDeg = function (radians: number): number { return radToDeg(radians); };
+
+  Array.prototype.shuffle = function <T>(): Array<T> {
+    /** src: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array */
+    let currentIndex = this.length, randomIndex;
+    while(currentIndex != 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [this[currentIndex], this[randomIndex]] = [
+        this[randomIndex], this[currentIndex]
+      ];
+    }
+    return this as Array<T>;
+  };
+  Array.prototype.remove = function <T>(predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
+    const itemIndex = this.findIndex(predicate);
+    return this.removeIndex(itemIndex) as Array<T>;
+  };
+  Array.prototype.removeAll = function <T>(predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
+    for(let i = this.length - 1; i >= 0; i--) {
+      predicate(this[i], i, this) && this.splice(i, 1);
+    }
+    return this as Array<T>;
+  };
+  Array.prototype.removeIndex = function<T>(index: number): Array<T> {
+    const isIndexWithinBounds = index >= 0 && index < this.length;
+    if(isIndexWithinBounds) {
+      this.splice(index, 1);
+    }
+    return this as Array<T>;
+  };
+
+  Array.shuffle = function <T>(array: Array<T>): Array<T> {
+    return deepCopy(array).shuffle();
+  };
+  Array.remove = function <T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
+    return deepCopy(array).remove(predicate);
+  };
+  Array.removeAll = function <T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
+    return deepCopy(array).removeAll(predicate);
+  };
+  Array.removeIndex = function <T>(array: Array<T>, index: number): Array<T> {
+    return deepCopy(array).removeIndex(index);
+  };
 }
