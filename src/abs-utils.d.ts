@@ -67,15 +67,15 @@ declare global {
 
   interface Array<T> {
     shuffle(): Array<T>;
-    remove(predicate: (item: T) => boolean): Array<T>;
-    removeAll(predicate: (item: T) => boolean): Array<T>;
+    remove(predicate: (item: T, index: number, array: T[]) => boolean): Array<T>;
+    removeAll(predicate: (item: T, index: number, array: T[]) => boolean): Array<T>;
     removeIndex(index: number): Array<T>;
   }
 
   interface ArrayConstructor {
     shuffle<T>(array: Array<T>): Array<T>;
-    remove<T>(array: Array<T>, predicate: (item: T) => boolean): Array<T>;
-    removeAll<T>(array: Array<T>, predicate: (item: T) => boolean): Array<T>;
+    remove<T>(array: Array<T>, predicate: (item: T, index: number, array: T[]) => boolean): Array<T>;
+    removeAll<T>(array: Array<T>, predicate: (item: T, index: number, array: T[]) => boolean): Array<T>;
     removeIndex<T>(array: Array<T>, index: number): Array<T>;
   }
 }

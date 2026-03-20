@@ -272,14 +272,14 @@ declare global {
   }
   interface Array<T> {
     shuffle(): Array<T>;
-    remove(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
-    removeAll(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
+    remove(predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
+    removeAll(predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
     removeIndex(index: number): Array<T>;
   }
   interface ArrayConstructor {
     shuffle<T>(array: Array<T>): Array<T>;
-    remove<T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
-    removeAll<T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T>;
+    remove<T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
+    removeAll<T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T>;
     removeIndex<T>(array: Array<T>, index: number): Array<T>;
   }
 }
@@ -336,11 +336,11 @@ export function absPolyfill(): void {
     }
     return this as Array<T>;
   };
-  Array.prototype.remove = function <T>(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+  Array.prototype.remove = function <T>(predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
     const itemIndex = this.findIndex(predicate);
     return this.removeIndex(itemIndex) as Array<T>;
   };
-  Array.prototype.removeAll = function <T>(predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+  Array.prototype.removeAll = function <T>(predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
     for(let i = this.length - 1; i >= 0; i--) {
       predicate(this[i], i, this) && this.splice(i, 1);
     }
@@ -357,10 +357,10 @@ export function absPolyfill(): void {
   Array.shuffle = function <T>(array: Array<T>): Array<T> {
     return deepCopy(array).shuffle();
   };
-  Array.remove = function <T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+  Array.remove = function <T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
     return deepCopy(array).remove(predicate);
   };
-  Array.removeAll = function <T>(array: Array<T>, predicate: (value: T, index?: number, array?: T[]) => boolean): Array<T> {
+  Array.removeAll = function <T>(array: Array<T>, predicate: (value: T, index: number, array: T[]) => boolean): Array<T> {
     return deepCopy(array).removeAll(predicate);
   };
   Array.removeIndex = function <T>(array: Array<T>, index: number): Array<T> {

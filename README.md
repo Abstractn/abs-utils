@@ -134,22 +134,22 @@ Browser iclusion:
 
 - ### Array.remove (static)
   - `array: Array<T>`
-  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - `predicate: (value: T, index: number, array: Array<T>) => boolean`
   - returns `Array<T>`
   - does not mutate original array
 
 - ### Array.remove (prototype)
-  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - `predicate: (value: T, index: number, array: Array<T>) => boolean`
   - mutates original array
 
 - ### Array.removeAll (static)
   - `array: Array<T>`
-  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - `predicate: (value: T, index: number, array: Array<T>) => boolean`
   - returns `Array<T>`
   - does not mutate original array
 
 - ### Array.removeAll (prototype)
-  - `predicate: (value: T, index?: number, array?: Array<T>) => boolean`
+  - `predicate: (value: T, index: number, array: Array<T>) => boolean`
   - mutates original array
 
 - ### Array.removeIndex (static)
